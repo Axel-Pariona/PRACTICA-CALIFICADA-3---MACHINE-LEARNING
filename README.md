@@ -137,4 +137,4 @@ python predict_and_send.py
 ## **Video de Demostración**
 
 🔗 YouTube:
-[https://youtu.be/XXXXXXXXXXX](https://youtu.be/F_7UR1QY6-U )
+[https://youtu.be/F_7UR1QY6-U ](https://youtu.be/F_7UR1QY6-U )
