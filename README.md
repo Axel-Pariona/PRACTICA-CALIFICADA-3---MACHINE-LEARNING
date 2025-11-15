@@ -86,11 +86,55 @@ Contiene:
 
 ## **Diagrama de Arquitectura**
 
-```mermaid
-flowchart LR
-  A[Camara NAO / Webcam] --> B[Preprocesamiento (resize, rescale)]
-  B --> C[Modelo - MobileNetV2]
-  C --> D{Predicción}
-  D -->|FIST| E[Socket → NAO]
-  D -->|NO_FIST| F[Postura neutral]
-  E --> G[NAO: Postura defensiva + voz]
+> Flujo: Cámara → Preprocesamiento → Modelo → Predicción → NAO (acción física).
+
+
+##  Instalación y Configuración
+
+### **1. Crear entorno virtual**
+```bash
+python -m venv venv
+```
+### **2. Activar entorno virtual**
+
+Windows:
+
+```bash
+.\venv\Scripts\activate
+```
+
+Linux/MacOS:
+
+```bash
+source venv/bin/activate
+```
+
+### **3. Instalar dependencias**
+```bash
+pip install -r requirements.txt
+```
+
+### **4. Configurar IP del robot NAO**
+Editar en predict_and_send.py:
+
+```bash
+NAO_IP = "192.168.1.100"   # Cambiar por la IP real del NAO
+NAO_PORT = 9000
+```
+
+### **5. Ejecutar el servidor en NAO**
+```bash
+cd src
+python nao-server.py
+```
+
+### **6. Ejecutar predicción en la PC**
+```bash
+cd src
+python predict_and_send.py
+```
+
+## **Video de Demostración**
+
+🔗 YouTube:
+https://youtu.be/XXXXXXXXXXX
