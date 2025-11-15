@@ -1,4 +1,3 @@
-# ```markdown
 
 # \# PC3 - Detección de golpes con NAO (Fist vs No\_fist)
 
