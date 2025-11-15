@@ -1,83 +1,59 @@
+# **PC3 – Detección de golpes con NAO (Fist vs No_fist)**
 
-# \# PC3 - Detección de golpes con NAO (Fist vs No\_fist)
+**Curso:** Machine Learning — UPC  
+**Práctica:** PC3 — Detección de golpes y reacción física con NAO  
+**Integrantes:** Omar Acuña Villegas, Axel Yamir Pariona Rojas, Marcelo Paolo Murguia Lozano  
+**Fecha:** Noviembre 2025  
 
-# 
+---
 
-# \*\*Curso:\*\* Machine Learning — UPC  
+## **Objetivo del Proyecto**
 
-# \*\*Práctica:\*\* PC3 — Detección de golpes y reacción física con NAO  
+El objetivo de este proyecto es desarrollar e integrar un modelo de Machine Learning supervisado (clasificación binaria: **fist** / **no_fist**) en el robot humanoide **NAO**.  
+El sistema detecta golpes mediante visión por computadora y ejecuta una acción física coherente:
 
-# \*\*Integrantes:\*\* Omar Acuña Villegas, Axel Yamir Pariona Rojas, Marcelo Paolo Murguia Lozano  
+- Si detecta **fist** → El NAO adopta una postura defensiva y emite un mensaje de alerta.  
+- Si detecta **no_fist** → El NAO permanece en postura neutral.
 
-# \*\*Fecha:\*\* Noviembre 2025
+El flujo completo (captura → predicción → acción) se ejecuta de manera **automática y sin intervención manual**, cumpliendo los requisitos de la PC3.
 
-# 
+---
 
-# ---
+## **Contenido del repositorio**
 
-# 
+- `src/Trainmodel_PY3.py` — Script de entrenamiento del modelo (MobileNetV2 con Transfer Learning).  
+- `src/predict_and_send.py` — Script de predicción en tiempo real y envío de resultados al NAO vía socket.  
+- `src/nao-server.py` — Servidor que recibe la predicción y ejecuta acciones en el robot.  
+- `src/Mark2.py` — Acciones y posturas defensivas configuradas en NAO.  
+- `src/NAO_PC3_pasado.py` — Versión alternativa y pruebas de integración.  
+- `models/model_fist_detection.h5` — Modelo entrenado (si aplica).  
+- `DATASET/` — Estructura completa del dataset (train / valid / test).  
+- `tmp_binarized_dataset/` — Dataset convertido a binario para el entrenamiento (fist/no_fist).  
+- `results/accuracy_curve.png` — Curva de precisión del entrenamiento.  
+- `results/loss_curve.png` — Curva de pérdida del entrenamiento.  
+- `architecture_diagram.mmd` — Diagrama de arquitectura en Mermaid.  
+- `docs/report.pdf` — Informe completo en PDF.
 
-# \## Objetivo
+---
 
-# Desarrollar e integrar un modelo de Machine Learning supervisado (clasificación binaria: \*fist\* / \*no\_fist\*) en el robot humanoide NAO. El sistema detecta golpes a través de la visión, y condiciona la acción física del robot (voz + postura defensiva) a la predicción.
+## **Diagrama de Arquitectura**
 
-# 
+> Flujo general:  
+> **Cámara → Preprocesamiento → Modelo → Predicción → Comunicación Socket → NAO (Postura + Voz)**
 
-# ---
+Código Mermaid visualizable en GitHub:
 
-# 
+```mermaid
+flowchart LR
+  A[Camara NAO / Webcam] --> B[Preprocesamiento (resize, rescale)]
+  B --> C[Modelo - MobileNetV2 (h5)]
+  C --> D{Predicción}
+  D -->|FIST| E[Control NAO (socket)]
+  D -->|NO_FIST| F[Postura neutral]
+  E --> G[NAO - TTS y postura defensiva]
 
-# \## Contenido del repositorio
-
-# \- `src/Trainmodel\_PY3.py` — Script de entrenamiento (transfer learning con MobileNetV2).
-
-# \- `src/predict\_and\_send.py` — Predicción en tiempo real y envío de señal al NAO (socket).
-
-# \- `src/nao-server.py` — Servidor que corre junto al NAO y recibe mensajes para ejecutar acciones.
-
-# \- `src/Mark2.py`, `src/NAO\_PC3\_pasado.py` — Scripts de manejo de posturas y secuencias de voz.
-
-# \- `models/model\_fist\_detection.h5` — Modelo entrenado (incluir si no es muy grande).
-
-# \- `DATASET/` — Estructura del dataset (train/valid/test).
-
-# \- `tmp\_binarized\_dataset/` — Estructura temporal utilizada por el `Trainmodel\_PY3.py`.
-
-# \- `results/accuracy\_curve.png`, `results/loss\_curve.png` — Curvas de entrenamiento.
-
-# \- `architecture\_diagram.mmd` — Diagrama de arquitectura (Mermaid).
-
-# \- `docs/report.pdf` — Informe final (PDF).
-
-# 
-
-# ---
-
-# 
-
-# \## Diagrama de arquitectura
-
-# > Flujo: Cámara → Preprocesamiento → Modelo → Predicción → NAO (acción física).
-
-# 
-
-# ---
-
-# 
-
-# \## Instalación y dependencias
-
-# 
-
-# ```bash
-
-# python -m venv venv
-
-# source venv/bin/activate   # Linux/Mac
-
-# \# .\\venv\\Scripts\\activate  # Windows
-
-# pip install -r requirements.txt
-
-
-
+  subgraph Offline - Training
+    H[Entrenamiento: Trainmodel_PY3.py]
+    H --> C
+    I[Curvas de entrenamiento (accuracy/loss)]
+  end
