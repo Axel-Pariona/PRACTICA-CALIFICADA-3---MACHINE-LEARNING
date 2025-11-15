@@ -1,0 +1,13 @@
+```mermaid
+flowchart LR
+  A[Camara NAO / Webcam] --> B[Preprocesamiento (resize, rescale)]
+  B --> C[Modelo ML - MobileNetV2 (h5)]
+  C --> D{Predicción}
+  D -->|FIST| E[Control NAO - socket -> nao-server]
+  D -->|NO_FIST| F[No acción / Postura neutral]
+  E --> G[NAO (NAOqi) -> TTS + Movimientos]
+  subgraph Offline
+    H[Entrenamiento: Trainmodel_PY3.py]
+    H --> C
+    I[Resultados: accuracy_curve.png, loss_curve.png] --> README
+  end
