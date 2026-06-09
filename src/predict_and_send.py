@@ -4,12 +4,15 @@ import numpy as np
 from tensorflow.keras.models import load_model
 import socket
 import time # ¡Nuevo!
+from pathlib import Path
+import os
 
 # === CONFIGURACIÓN ===
-MODEL_PATH = "model_fist_detection.h5"
+ROOT_DIR = Path(__file__).resolve().parent.parent
+MODEL_PATH = ROOT_DIR / "models" / "model_fist_detection.h5"
+NAO_IP = os.getenv("NAO_IP", "127.0.0.1")
+NAO_PORT = int(os.getenv("NAO_PORT", "5000"))
 IMG_SIZE = (160, 160)
-NAO_IP = "127.0.0.1"
-NAO_PORT = 5000
 
 # === PARÁMETROS DE DELAY ===
 # Define cuánto tiempo debe esperar el cliente (en segundos) antes de enviar otro mensaje.
@@ -17,7 +20,7 @@ COOLDOWN_DELAY = 10
 ultimo_envio = 0.0 # Variable para registrar la hora del último envío
 
 # === CARGA DEL MODELO ===
-model = load_model(MODEL_PATH)
+model = load_model(str(MODEL_PATH))
 
 # === CONFIGURAR CONEXIÓN CON NAO ===
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -43,7 +46,9 @@ while True:
 
     # Predicción
     prediction = model.predict(img)
-    label = "FIST" if prediction[0][0] > 0.5 else "NEUTRAL"
+    prob_no_fist = float(prediction[0][0])
+    label = "NO_FIST" if prob_no_fist >= 0.5 else "FIST"
+    confidence = prob_no_fist if label == "NO_FIST" else 1.0 - prob_no_fist
 
     # Mostrar resultado en la pantalla
     cv2.putText(frame, f"Prediction: {label}", (30, 50),

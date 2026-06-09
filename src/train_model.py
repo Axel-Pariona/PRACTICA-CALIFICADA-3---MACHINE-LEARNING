@@ -13,17 +13,32 @@ from tensorflow.keras.layers import Dense, GlobalAveragePooling2D, Dropout
 from tensorflow.keras.models import Model
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.callbacks import ModelCheckpoint, ReduceLROnPlateau, EarlyStopping
+from pathlib import Path
 
 # ----------------- CONFIG -----------------
-DATA_DIR = "C:\\Users\\Lenovo\\Downloads\\PC3-ML\\DATASET\\data"     # debe contener 'train' y opcionalmente 'valid'; si no hay 'valid' usará validation_split
-TRAIN_DIR = os.path.join(DATA_DIR, "train")
-VALID_DIR = os.path.join(DATA_DIR, "valid")  # opcional
+from pathlib import Path
+
+ROOT_DIR = Path(__file__).resolve().parent.parent
+
+DATA_DIR = ROOT_DIR / "data"
+TRAIN_DIR = DATA_DIR / "train"
+VALID_DIR = DATA_DIR / "validation"
+TEST_DIR = DATA_DIR / "test"
+
+TMP_DIR = ROOT_DIR / "tmp_binarized_dataset"
+MODELS_DIR = ROOT_DIR / "models"
+RESULTS_DIR = ROOT_DIR / "results"
+
 IMG_SIZE = (160, 160)
 BATCH_SIZE = 32
-EPOCHS = 10            # <-- Cambia aquí si quieres otro número de épocas (actualmente 10)
-OUTPUT_MODEL = "model_fist_detection.h5"
-LABEL_MAP_OUT = "label_map.json"
+EPOCHS = 10
 LEARNING_RATE = 1e-4
+
+OUTPUT_MODEL = MODELS_DIR / "model_fist_detection.h5"
+LABEL_MAP_OUT = MODELS_DIR / "label_map.json"
+
+MODELS_DIR.mkdir(exist_ok=True)
+RESULTS_DIR.mkdir(exist_ok=True)
 # ------------------------------------------
 
 # Crear una carpeta temporal para binarizar clases si es necesario:
@@ -72,7 +87,7 @@ def ensure_binary_valid_structure(orig_valid_dir, temp_dir):
                     pass
 
 # Preparar datos
-temp_dir = "tmp_binarized_dataset"
+temp_dir = str(TMP_DIR)
 if not os.path.exists(TRAIN_DIR):
     raise SystemExit("No se encontró carpeta TRAIN: {}".format(TRAIN_DIR))
 
@@ -178,14 +193,14 @@ try:
     plt.plot(history.history['val_accuracy'], label='val_acc')
     plt.legend()
     plt.title("Accuracy")
-    plt.savefig("accuracy_curve.png")
+    plt.savefig(RESULTS_DIR / "accuracy_curve.png")
 
     plt.figure()
     plt.plot(history.history['loss'], label='train_loss')
     plt.plot(history.history['val_loss'], label='val_loss')
     plt.legend()
     plt.title("Loss")
-    plt.savefig("loss_curve.png")
+    plt.savefig(RESULTS_DIR / "loss_curve.png")
     print("Curvas guardadas.")
 except Exception as e:
     print("No se pudieron guardar curvas:", e)

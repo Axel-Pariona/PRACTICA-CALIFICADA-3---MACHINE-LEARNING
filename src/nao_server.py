@@ -4,14 +4,17 @@ import socket
 import threading
 import sys
 import time
-
-sys.path.append("C:/Users/yamir/Desktop/PC_ML_NAO/pynaoqi-python2.7-2.8.6.23-win64-vs2015-20191127_152649/lib")
-
 from naoqi import ALProxy
+import os
 
-NAO_IP = "127.0.0.1"
-NAO_PORT = 65512
-SERVER_PORT = 5000
+NAOQI_PATH = os.getenv("NAOQI_PATH")
+
+if NAOQI_PATH:
+    sys.path.append(NAOQI_PATH)
+
+NAO_IP = os.getenv("NAO_IP", "127.0.0.1")
+NAO_PORT = int(os.getenv("NAO_PORT", "9559"))
+SERVER_PORT = int(os.getenv("SERVER_PORT", "5000"))
 
 
 

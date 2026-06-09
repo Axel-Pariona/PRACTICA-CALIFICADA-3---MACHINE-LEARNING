@@ -1,0 +1,23 @@
+flowchart LR
+  A[Camara NAO o Webcam] --> B[Preprocesamiento: resize 160x160 y normalizacion]
+  B --> C[Modelo ML: MobileNetV2 H5]
+  C --> D{Prediccion}
+  D -->|FIST| E[Cliente envia FIST por socket TCP]
+  D -->|NO_FIST| F[Cliente envia NO_FIST por socket TCP]
+
+  E --> G[nao_server.py]
+  F --> G
+
+  G --> H{Mensaje recibido}
+  H -->|FIST| I[NAO: alerta verbal y postura simbolica]
+  H -->|NO_FIST| J[NAO: postura neutral]
+
+  subgraph Entrenamiento offline
+    K[data/train y data/validation] --> L[train_model.py]
+    L --> M[Binarizacion temporal: fist vs no_fist]
+    M --> N[Entrenamiento MobileNetV2]
+    N --> O[models/model_fist_detection.h5]
+    N --> P[results/accuracy_curve.png y loss_curve.png]
+  end
+
+  O --> C

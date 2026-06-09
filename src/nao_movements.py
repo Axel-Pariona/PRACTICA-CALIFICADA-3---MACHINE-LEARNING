@@ -90,7 +90,7 @@ def detectar_cercania():
 
                 if area > 25000:
                     print("Persona MUY cerca -> defensa agresiva")
-                    tts.say("¡Alerta! Estás demasiado cerca.")
+                    tts.say("Alerta de proximidad detectada.")
                     gesto_ambos_brazos_ataque()
                 elif area > 10000:
                     print("Persona cerca -> postura defensiva")
