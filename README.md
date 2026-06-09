@@ -235,7 +235,7 @@ Puede visualizarse con herramientas compatibles con Mermaid.
 Clonar el repositorio:
 
 ```bash
-git clone <url-del-repositorio>
+git clone https://github.com/Axel-Pariona/NAO-Fist-Detection-ML.git
 cd NAO-Fist-Detection-ML
 ```
 
